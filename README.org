@@ -1,1 +1,132 @@
 #+title: HTDP Notes
+#+options: toc:nil num:nil
+
+* Frequently used DrRacket keybindings
+  
+- Run the code in the definitions area: Ctrl+r
+
+- Change focus between definitions and interactions area:  Ctrl+F6
+
+- Comment out and remove comment (can apply to multiple lines by selecting them): Ctrl+Alt+; and  Ctrl+Alt+= 
+  
+- Complete the half typed function name: Ctrl+/ 
+  
+- Show/hide Interactions: Ctrl+e
+
+- Show/hide Definitions: Ctrl+d
+  
+- View documentation for a built-in function: select the function and press F1
+
+- insert 'λ': Ctrl+\
+  
+We can rebind built-in keybinding with a custom keybinding by writing a racket file and loading it by clicking Edit -> Keybindings -> Add User-defined Keybindings...
+
+
+Here's a sample racket code for replacing the keybinding for changing focus between definitions and interactions from Ctrl+F6 to Ctrl+].
+
+#+begin_src racket
+
+#lang s-exp framework/keybinding-lang
+
+(define (rebind key command)
+  (keybinding
+   key
+   (λ (ed evt)
+     (send (send ed get-keymap) call-function
+           command ed evt #t))))
+
+(rebind "c:]" "shift-focus")
+
+#+end_src
+
+* Prologue: How to Program
+  
+The book does not claim to teach us Racket. It rather teaches small restricted subsets of Racket, namely Beginning Student Language (BSL), Intermediate Student Language (ISL) etc.
+So, while searching for documentation we need to be mindful of the language we're using as functions having same name might have different definitions in different languages.
+
+BSL supports various basic types like numbers, strings, booleans etc.
+
+
+#+begin_src racket
+
+; arithmetic
+(+ 1 1)        ; => 2
+(* 2 3)        ; => 6
+
+; #i... means inexact numbers
+(sqrt 2)       ; => #i1.4142135623730951
+
+; complex number support
+(sqrt -1)      ; => 0+1i
+
+
+; strings and some simple operations
+(string-append "hello" ", " "world")   ; => "hello, world"
+(string-length "hello")                ; => 5
+(string->number "42")                  ; => 42
+(string-append "hello" ", " "world")   ; => "hello, world"
+
+; booleans
+(and #true #false)                     ; => #false
+> (or (and #false #true) #true)        ; => #true
+> (string=? "hello" "world")           ; => #false
+> (string=? "hello" "hello")           ; => #true
+> 
+
+
+#+end_src
+
+BSL also understands images. We need to include 2htdp/image teachpack to work with images.
+
+[[file:images/prologue-image.png]]
+
+Above, we defined a variable with the keyword 'define'. We can define functions as well with the syntax:
+
+(define (/function-name/  /parameter/) /body-expression/)
+
+for example:
+
+#+begin_src racket
+(define (cube x) (* x x x))
+#+end_src
+
+A conditional expression has the following structure in BSL: 
+
+(cond
+
+[ /ConditionExpression1/ /ResultExpression1/ ]
+
+[ /ConditionExpression2/ /ResultExpression2/ ]
+
+...
+
+[ /ConditionExpressionN/ /ResultExpressionN/ ]
+
+[else /ElseExpression/ ])
+
+We may put as many conditions as we like in the conditional expressions and the else line is optional.
+Each /ConditionExpression/ gives a boolean value and if the value is true the corresponding /ResultExpression/ is executed.
+
+for example:
+
+#+begin_src racket
+(define (sign n)
+  (cond 
+     ((> n 0) "positive")
+     ((< n 0) "negative")
+     (else "zero")))
+     
+(sign -10)    ; => "negative"
+(sign 20)     ; => "positive"
+(sign 0)     ; => "zero"
+#+end_src
+
+We'll learn more BSL syntax as we go. So, Let's Start.
+
+[[file:images/launch.gif]]
+
+ 
+  
+* I Fixed-Size Data
+
+** [[file:1_arithmetic.org][1. Arithmetic]]
