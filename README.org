@@ -1,5 +1,5 @@
 #+title: HTDP Notes
-#+options: toc:nil num:nil
+#+options: toc:2 num:nil
 
 * Frequently used DrRacket keybindings
   
