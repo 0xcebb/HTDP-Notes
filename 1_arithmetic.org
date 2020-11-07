@@ -1,3 +1,378 @@
 #+title: Arithmetic
+#+options: num:nil tags:nil
 
-* The Arithmetic of Numbers
+* 1.1 The Arithmetic of Numbers
+
+In addition to supporting commonly used operations like ~+~, ~-~, ~/~, ~*~, ~abs~ and functions like ~sin~, ~cos~, ~tan~, ~log~, ~quotient~, ~remainder~ etc., it also recognizes constants like ~pi~ and ~e~.
+
+#+begin_src racket
+(sinh (/ pi 2))    ; => #i1.0
+(log e)            ; => #i1.0
+#+end_src
+
+As we saw in prologue, BSL represents numbers as exact or inexact (numbers with #i prefix), and tries to represent them as precisely as possible. DrRacket can 
+render exact fractions as either decimal, mixed decimal or improper fraction (adjustable by right clicking on the fractional number).
+
+
+** Exercise 1                                                      :exercise:
+
+#+begin_quote
+Add the following definitions for x and y to DrRacket’s definitions area:
+
+#+begin_src racket
+(define x 3)
+(define y 4)
+#+end_src
+
+Now imagine that x and y are the coordinates of a Cartesian point. Write down an expression that computes the distance of this point to the origin, that is, a point with the coordinates (0,0).
+#+end_quote
+
+Solution:
+#+begin_src racket
+(define x 3)
+(define y 4)
+
+(sqrt (+(sqr x) (sqr y)))    ; => 5
+
+;; update the definitions and recalculate
+(define x 12)
+(define y 5)
+(sqrt (+(sqr x) (sqr y)))    ; => 13 
+#+end_src
+
+* 1.2 The Arithmetic of Strings
+~string-append~ is the only function in BSL that takes a string as input and outputs a string.
+** Exercise 2                                                      :exercise:
+#+begin_quote
+Add the following definitions to definitions area:
+
+#+begin_src racket
+(define prefix "hello")
+(define suffix "world")
+#+end_src
+
+Then use string primitives to create an expression that concatenates prefix and suffix and adds "_" between them.
+When you run this program, you will see "=hello_world=" in the interactions area.
+#+end_quote
+
+Solution:
+#+begin_src racket
+(define prefix "hello")
+(define suffix "world")
+
+(string-append prefix "_" suffix)    ; => "hello_world"
+#+end_src
+
+* 1.3 Mixing It Up
+Some functions concerning strings that consume or produce other than strings:
+#+begin_src racket
+(string-length "hello, world!")    ; => 13
+(number->string 101)               ; => "101"
+(number->string 2714e+10)          ; => "27140000000000"
+(string-ith "Racket is cool" 10)   ; => "c"
+(substring "Racket is cool" 0 6)   ; => "Racket"
+(substring "Racket is cool" 10)    ; => "cool"
+(string->number "42")              ; => 42
+(string->number "hello")           ; => #false 
+
+;; BSL throws exception when it encounters errors
+(string->number 10)                ; => error!  
+
+#+end_src
+Invoking ~string->number~ has 3 possible outcomes depending on the input
+
+-- a number if input is a valid string representing number e.g. "42"
+
+-- ~#false~ if input is a valid string but does not represent a number e.g. "hello"
+
+-- Throws an error if the input is not a valid string
+
+** Exercise 3                                                      :exercise:
+#+begin_quote 
+Add the following two lines to the definitions area:
+
+#+begin_src racket
+(define str "helloworld")
+(define i 5)
+#+end_src
+
+Then create an expression using string primitives that adds "_" at position i.
+In general this means the resulting string is longer than the original one; here the expected result is "hello_world".
+#+end_quote
+
+Solution:
+#+begin_src racket
+(define str "helloworld")
+(define i 5)
+
+(string-append (substring str 0 i) "_" (substring str i))  ; => "hello_world"
+#+end_src
+
+** Exercise 4                                                      :exercise:
+#+begin_quote 
+Use the same setup as in exercise 3 to create an expression that deletes the ith position from str.
+Clearly this expression creates a shorter string than the given one. Which values for i are legitimate?
+#+end_quote
+
+Solution:
+#+begin_src racket
+(define str "helloworld")
+(define i 5)
+
+(string-append (substring str 0 i) (substring str (+ i 1)))  ; => "helloorld"
+#+end_src
+
+The valid values for ~i~ in this case are 0,1,2, ... 9.
+
+* 1.4 The Arithmetic of Images
+BSL treats images just like any other values. If the definitions area in DrRacket contains any images, saving the code produces gracket variant code (See [[https://docs.racket-lang.org/reference/running-sa.html][Running Racket or GRacket]]).
+/2htdp/image/ library provides some necessary functions to manipulate images, so make sure to include it while working with images.
+
+#+BEGIN_SRC racket
+(require 2htdp/image)
+
+;; image primitives
+(circle 20 50 "blue")
+(ellipse 50 70 "solid" "salmon")
+(line 30 30 "green")
+(triangle 40 255 "purple")
+(rectangle 70 50 "outline" "cyan")
+(star 50 "solid" "yellow")
+
+;; functions that outputs image properties
+(define my-ellipse (ellipse 20 25 "solid" "red"))
+(image-width my-ellipse)        ; => 20
+(image-height my-ellipse)       ; => 25
+#+END_SRC
+
+Images are made of many pixels, one of them is implicitly set as the /anchor point/. Anchor points
+are the points with respect to which image composition happens, unless you explicitly provide some other point. 
+~overlay~ creates a new image by placing all the given images on top of each other using their center as the anchor point.
+There are other variations like ~overlay/xy~, ~overlay/align~, ~overlay/offset~ etc. that take extra arguments
+to place the anchor points in different positions. 
+
+~empty-scene~ creates a rectangle of some given width and height and ~place-image~ puts an image into the scene
+at a specified position.
+
+#+BEGIN_SRC racket
+
+;; image composition functions
+(overlay (rectangle 40 40 "solid" "gray")
+         (rectangle 60 60 "solid" "yellow")
+         (rectangle 80 80 "solid" "gray")
+         (rectangle 100 100 "solid" "yellow")
+	 (rectangle 120 120 "solid" "gray"))
+	 
+(overlay/xy (rectangle 40 40 "solid" "yellow")
+                20 20
+		(rectangle 40 40 "solid" "black"))
+		
+(overlay/align "right" "middle" 
+	(circle 50 45 "blue")
+	(circle 30 90 "pink")
+	(circle 20 150 "green"))
+
+(underlay (rectangle 140 140 "solid" "gray")
+	(rectangle 80 80 "solid" "yellow")
+	(rectangle 60 60 "solid" "gray")
+        (rectangle 40 40 "solid" "yellow")
+	(rectangle 20 20 "solid" "gray"))
+	 
+
+(define stage (empty-scene 40 60))
+(place-image (circle 60 "outline" "brown")
+             20 10
+             stage) 
+	     
+(scene+line stage
+        0 (image-width stage) 0 (image-height stage)
+        "red")
+       
+#+END_SRC
+
+** Exercise 5                                                      :exercise:
+#+BEGIN_QUOTE
+Use the /2htdp/image/ library to create the image of a simple boat or tree. Make sure you can easily change the scale of the entire image. 
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+
+(require 2htdp/image)
+
+(define branch (circle 50 "solid" "green"))
+(define branch-height (image-height branch))
+(define branch-width (image-width branch))
+
+; our tree's crown is made of three branches
+(define crown
+  (overlay/xy (overlay/xy
+               branch
+               branch-width 0
+               branch)
+              (/ branch-width 2)
+              (- (/ branch-height 2))
+              branch))
+
+(define crown-width (image-width crown))
+
+(define trunk (rectangle 40 150 "solid" "brown"))
+(define trunk-height (image-height trunk))
+(define trunk-width (image-width trunk))
+
+;; a tree's visible part consist of its crown and the trunk
+(overlay/xy crown
+            (- (/ crown-width 2) (/ trunk-width 2))
+            branch-height
+            trunk)
+#+END_SRC
+
+[[./images/tree1.png]]
+
+** Exercise 6                                                      :exercise:
+
+#+BEGIN_QUOTE
+Add the following line to the definitions area:
+
+(define cat [[./images/cat1.png]])
+
+Copy and paste the cat image from the book into your DrRacket.
+
+Create an expression that counts the number of pixels in the image. 
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+(* (image-width cat)
+   (image-height cat))
+
+#+END_SRC
+
+* 1.5 The Arithmetic of Booleans
+Boolean values are represented as ~#true~ and ~#false~ in BSL.  
+#+begin_src racket
+;; boolean operations
+
+(or #true #false)    ; => #true
+(and #true #false)   ; => #false
+(not #true)          ; => #false
+#+end_src
+
+** Exercise 7                                                      :exercise:
+
+#+begin_quote 
+Boolean expressions can express some everyday problems. Suppose you want to decide whether today is an appropriate day to go to the mall.
+You go to the mall either if it is not sunny or if today is Friday (because that is when stores post new sales items).
+#+end_quote
+
+Solution:
+#+begin_src racket
+;; suppose today it is sunny but not a friday
+(define sunny #true)
+(define friday #false)
+
+;; Shall I go to the mall?
+(or (not sunny) friday)    ; => #false
+#+end_src
+
+
+* 1.6 Mixing It Up with Booleans
+
+Comparision primitives return boolean values.
+#+begin_src racket
+(= 5 5)        ; => #true
+(<= 5 6.7)     ; => #true
+(>= 5 5.23)    ; => #false
+(< 1.101 1.0)  ; => #false
+(> 9 3)        ; => #true
+
+;; there's also string comparision operators
+(string=? "mississippi" "missisippi")  ; => #false
+(string<? "green" "purple")            ; => #true
+(string>? "andromeda" "azalea")      ; => #true
+#+end_src
+
+
+~if~ expression is used to evaluate expressions based on some condition.
+
+(if /condition-expression/ /expression1/ /expression2/ )
+
+The /condition-expression/ should be a boolean expression (i.e. should return either ~#true~ or ~#false~) otherwise an error is thrown.
+If /condition-expression/ returns ~#true~, /expression1/ is evaluated, otherwise /expression2/ is evaluated. The value of the
+entire ~if~ expression is the value of the evaluated expression.
+
+Although, ~if~ looks like a primitive function, it is not. Unlike other primitve functions, it can skip evaluating a sub-expression, which makes it *special*.
+Hopefully, this will be explained later in the book. 
+
+#+begin_src racket
+(define x 5)
+(if (= x 0) 0 (/ 1 x))    ; => 0.2
+#+end_src
+
+** Exercise 8                                                      :exercise:
+
+#+begin_quote
+Add the following line to the definitions area:
+
+(define cat  [[./images/cat1.png]])
+
+
+Create a conditional expression that computes whether the image is tall or wide. An image should be labeled "tall" if its height is larger than or equal to its width;
+otherwise it is "wide". See exercise 1 for how to create such expressions in DrRacket; as you experiment, replace the cat with a rectangle of your choice to ensure that you know the expected answer.
+Now try the following modification. Create an expression that computes whether a picture is "tall", "wide", or "square". 
+#+end_quote
+
+Solution:
+
+#+BEGIN_SRC racket
+;; tall or wide?
+(cond [(>= (image-height cat) (image-width cat)) "tall"]
+      [else "wide"])
+      
+;; tall, wide or square?
+(cond [(> (image-height cat) (image-width cat)) "tall"]
+      [(> (image-width cat) (image-height cat)) "wide"]
+      [else "square"])
+#+END_SRC
+
+* 1.7 Predicates: Know Thy Data
+
+Another type of expressions that return booleans are /Predicates/. By convention, they have =?= at the end.
+Predicates are mainly used to determine if the given value belongs to a certain class (or subclass) of data.
+
+#+begin_src racket
+(number? 4)          ; => #true
+(string? 42)         ; => #false
+(rational? pi)       ; => #true
+(complex? (sqrt -1)) ; => #true
+(exact? (sin pi))    ; => #false
+#+end_src
+
+** Exercise 9                                                      :exercise:
+
+#+begin_quote
+Add the following line to the definitions area:
+
+~(define in ...)~
+
+Then create an expression that converts the value of in to a positive number. For a String, it determines how long the String is;
+for an Image, it uses the area; for a Number, it decrements the number by 1, unless it is already 0 or negative; for #true it uses 10 and for #false 20.
+*Hint: Check out cond from the Prologue: How to Program (again)*.
+
+#+end_quote
+
+Solution:
+#+BEGIN_SRC racket
+(cond
+  [(string? in) (string-length in)]
+  [(image? in) (* (image-width in) (image-height in))]
+  [(number? in) (if (>= 0) 0 (- in 1))]
+  [(boolean? in) (if in 10 20)])
+
+#+END_SRC
+
+
+
+
