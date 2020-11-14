@@ -1,0 +1,732 @@
+#+title: Functions and Programs
+#+options: num:nil tags:nil
+
+* 2.1 Functions
+Function definitions in BSL are in the format:
+#+BEGIN_QUOTE
+(define (/FunctionName/ /Variable/ ... /Variable/)
+  /Expression/)
+#+END_QUOTE
+
+#+BEGIN_SRC racket
+(define (add10 x)
+  (+ x 10))
+  
+;; calling our add10 function
+(add10 5)    ; => 15
+
+#+END_SRC
+
+** Exercise 11                                                     :exercise:
+#+BEGIN_QUOTE
+Define a function that consumes two numbers, x and y, and that computes the distance of point (x,y)
+to the origin.
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+(define (distance x y)
+  (sqrt (+ (sqr x) (sqr y))))
+  
+(distance 8 6)  ; => 10
+
+#+END_SRC
+
+
+
+** Exercise 12                                                     :exercise:
+#+BEGIN_QUOTE
+Define the function cvolume, which accepts the length of a side of an equilateral cube and computes its volume.
+If you have time, consider defining csurface, too.
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+;; surface area = length x length
+(define (csurface l)
+  (* l l))
+
+;; volume = surface area x length
+(define (cvolume l)
+  (* l (csurface l)))
+
+(cvolume 12)    ; => 1728
+
+#+END_SRC
+
+
+
+
+
+** Exercise 13                                                     :exercise:
+#+BEGIN_QUOTE
+Define the function string-first, which extracts the first 1String from a non-empty string. 
+
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+;; extract the first 1String from a non-empty string 's'
+(define (string-first s)
+  (string-ith s 0))
+  
+(string-first "hello")    ; => "h"
+(string-first "")         ; => error!
+(string-first 23)         ; => error!
+
+#+END_SRC
+
+
+** Exercise 14                                                    :exercise:
+#+BEGIN_QUOTE
+
+ Define the function string-last, which extracts the last 1String from a non-empty string. 
+
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+;; extract the last 1String from a non-empty string 's'
+(define (string-last s)
+  (string-ith s (- (string-length s) 1)))
+  
+(string-last "hello")    ; => "o"
+(string-last "")         ; => error!
+(string-last 42)         ; => error!
+
+#+END_SRC
+
+
+** Exercise 15                                                     :exercise:
+
+#+BEGIN_QUOTE
+Define ~==>~. The function consumes two Boolean values, call them sunny and friday.
+Its answer is #true if sunny is false or friday is true. Note Logicians call this
+Boolean operation implication, and they use the notation sunny => friday for this purpose.
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+;; implication function
+(define (==> sunny friday)
+  (or (not sunny) friday))
+
+(==> #false #false)    ; => #true
+(==> #true #false)     ; => #false
+(==> #true #true)      ; => #true
+(==> #false #true)     ; => #true
+#+END_SRC
+
+
+** Exercise 16                                                     :exercise:
+#+BEGIN_QUOTE
+Define the function image-area, which counts the number of pixels in a given image.
+See exercise 6 for ideas.
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+(require 2htdp/image)
+
+(define (image-area img)
+  (* (image-width img) (image-height img)))
+
+#+END_SRC
+
+
+** Exercise 17                                                     :exercise:
+#+BEGIN_QUOTE
+Define the function image-classify, which consumes an image and conditionally produces "tall" if the image is taller than wide, "wide" if it is wider than tall, or "square" if its width and height are the same.
+See exercise 8 for ideas.
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+(require 2htdp/image)
+
+(define (image-classify img)
+  (cond [(> (image-height img) (image-width img)) "tall"]
+        [(> (image-width img) (image-height img)) "wide"]
+        [else "square"]))
+
+#+END_SRC
+
+
+** Exercise 18                                                     :exercise:
+#+BEGIN_QUOTE
+Define the function string-join, which consumes two strings and appends them with "_" in between.
+See exercise 2 for ideas.
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+(define (string-join s1 s2)
+  (string-append s1 "_" s2))
+  
+(string-join "mew" "mew")   ; => "mew_mew"
+#+END_SRC
+
+
+** Exercise 19                                                     :exercise:
+#+BEGIN_QUOTE
+Define the function string-insert, which consumes a string str plus a number i and inserts "_" at the ith position of str.
+Assume i is a number between 0 and the length of the given string (inclusive). See exercise 3 for ideas.
+Ponder how string-insert copes with "".
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+(define (string-insert str i)
+  (string-append (substring str 0 i)
+                 "_"
+                 (substring str i)))
+  
+(string-insert "00" 1)   ; => "0_0"
+(string-insert "" 0)     ; => "_"
+(string-insert "a" 1)    ; => "a_"
+(string-insert "" 1)     ; => error!
+#+END_SRC
+
+
+** Exercise 20                                                     :exercise:
+
+#+BEGIN_QUOTE
+Define the function string-delete, which consumes a string plus a number i and
+deletes the ith position from str. Assume i is a number between 0 (inclusive) and the
+length of the given string (exclusive). See exercise 4 for ideas. Can string-delete deal with empty strings?
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+(define (string-delete str i)
+  (string-append (substring str 0 i)
+                 (substring str (+ i 1))))
+  
+(string-delete "mew_mew" 3)    ; => "mewmew"
+(string-delete "mew_mew" 6)    ; => "mew_me"
+(string-delete "a" 0)          ; => ""
+(string-delete "" 0)          ; => error!
+
+
+#+END_SRC
+
+
+* 2.2 Computing
+
+DrRacket has a stepper button [[./images/stepper1.png]] that shows how it evaluates each expression step-by-step.
+After clicking the button, the stepper window pops up and you can step through the evaluation of 
+the program in the definitions area by clicking the /Next/ button.
+
+[[./images/stepper2.png]]
+
+** Exercise 21                                                     :exercise:
+#+BEGIN_QUOTE
+Enter definition of /ff/ into the definitions area:
+
+#+BEGIN_SRC racket
+
+(define (ff a) (* 10 a))
+
+#+END_SRC
+Use DrRacket's stepper to evaluate (ff (ff 1)) step-by-step. Also try (+ (ff 1) (ff 1)).
+Does DrRacket's stepper reuse the results of computations?
+#+END_QUOTE
+
+Solution:
+
+No, DrRacket's stepper does not reuse the results of computation. Each function application
+is substituted with the function body and evaluated from the start no matter how many times it is repeated.
+
+e.g.
+
+#+BEGIN_SRC racket 
+(define (ff a) (* 10 a))
+
+;; Near the top-right corner of the stepper window, a number like 1/10 means 
+;; that the stepper is executing step 1 of total 10 steps.
+;; running following lines of expression through the stepper reveals that total number of steps
+;; increases as the number of function applications increases.
+(+ (ff 1) (ff 1))                      ;; total number of steps = 6
+(+ (ff 1) (ff 1) (ff 1))               ;; total number of steps = 8
+(+ (ff 1) (ff 1) (ff 1) (ff 1))        ;; total number of steps = 10 
+(+ (ff 1) (ff 1) (ff 1) (ff 1) (ff 1)) ;; total number of steps = 12
+
+#+END_SRC 
+
+In the above example, each addtion of ~(ff 1)~ adds couple of steps of computation instead of
+just a single step for substitution. 
+
+
+** Exercise 22                                                     :exercise:
+#+BEGIN_QUOTE
+Use DrRacket’s stepper on this program fragment:
+
+#+BEGIN_SRC racket
+
+(define (distance-to-origin x y)
+  (sqrt (+ (sqr x) (sqr y))))
+(distance-to-origin 3 4)
+
+#+END_SRC
+Does the explanation match your intuition? 
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+(distance-to-origin 3 4)    ; => 5
+
+;; is equivalent to
+(sqrt (+ (sqr 3) (sqr 4)))
+
+;; is equivalent to
+(sqrt (+ 9 (sqr 4)))
+
+;; is equivalent to
+(sqrt (+ 9 16))
+
+;; is equivalent to
+(sqrt 25)
+
+#+END_SRC
+
+
+
+** Exercise 23                                                     :exercise:
+#+BEGIN_QUOTE
+The first 1String in "hello world" is "h". How does the following function compute this result?
+#+BEGIN_SRC racket
+
+(define (string-first s)
+  (substring s 0 1))
+#+END_SRC
+
+Use the stepper to confirm your ideas.
+#+END_QUOTE
+
+Solution:
+The function application ~(string-first "hello")~ is substituted with function body and ~s~ is replaced
+by the string argument "hello": ~(substring "hello" 0 1)~. Evaluating it gives "h".
+
+
+
+** Exercise 24                                                     :exercise:
+#+BEGIN_QUOTE
+Here is the definition of ==>: y
+#+BEGIN_SRC racket
+
+(define (==> x y)
+  (or (not x) y))
+#+END_SRC
+
+Use the stepper to determine the value of (==> #true #false). 
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+(==> #true #false)    ; => #false
+
+;; is equivalent to 
+(or (not #true) #false) 
+
+;; is equivalent to 
+(or #false #false)     ; => #false
+
+#+END_SRC
+
+
+** Exercise 25                                                     :exercise:
+#+BEGIN_QUOTE
+Take a look at this attempt to solve [[Exercise 17]]:
+
+#+BEGIN_SRC racket
+(define (image-classify img)
+  (cond
+    [(>= (image-height img) (image-width img)) "tall"]
+    [(= (image-height img) (image-width img)) "square"]
+    [(<= (image-height img) (image-width img)) "wide"]))
+
+#+END_SRC
+
+Does stepping through an application suggest a fix?
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+(define (image-classify img)
+  (cond
+    [(> (image-height img) (image-width img)) "tall"]
+    [(= (image-height img) (image-width img)) "square"]
+    [(< (image-height img) (image-width img)) "wide"]))
+
+#+END_SRC
+
+
+
+** Exercise 26                                                     :exercise:
+
+#+BEGIN_QUOTE
+What do you expect as the value of this program:
+#+BEGIN_SRC racket
+
+(define (string-insert s i)
+  (string-append (substring s 0 i)
+                 "_"
+                 (substring s i)))
+ 
+(string-insert "helloworld" 6)
+
+#+END_SRC
+
+Confirm your expectation with DrRacket and its stepper. 
+#+END_QUOTE
+
+Solution:
+The expected answer is the string ="hellow_orld"=.
+
+
+
+* 2.3 Composing Functions
+  
+/Composition/ is a way of constructing a bigger function using smaller functions
+known as /helper/ or /auxiliary/ functions where result of one function application is
+given as input to the other function. Each helper function should perform one task, and
+a /main/ function should combine the results to obtain the final outcome. A Slogan introduced
+in the book for this idea is: /Define one function per task./
+
+*** Sample Problem:
+#+BEGIN_QUOTE
+The owner of a monopolistic movie theater in a small town has complete freedom in setting ticket prices.
+The more he charges, the fewer people can afford tickets. The less he charges, the more it costs to run a show
+because attendance goes up. In a recent experiment the owner determined a relationship between the price of a
+ticket and average attendance.
+
+At a price of $5.00 per ticket, 120 people attend a performance. For each 10-cent change in the ticket price,
+the average attendance changes by 15 people. That is, if the owner charges $5.10, some 105 people attend on the average;
+if the price goes down to $4.90, average attendance increases to 135. Let’s translate this idea into a mathematical formula:
+
+[[./images/equation_2.3.png]]
+#+END_QUOTE
+
+The minus sign in the equation is necessary because /change in price/ could be either negative ( when price is less than $5)
+or positive (when price is more than $5). When it is negative, it makes the minus sign positive and
+the 15 people per $0.10 are added and when it is positive, the second term is subtracted from 120.
+
+#+BEGIN_QUOTE
+Unfortunately, the increased attendance also comes at an increased cost. Every performance comes
+at a fixed cost of $180 to the owner plus a variable cost of $0.04 per attendee.
+
+The owner would like to know the exact relationship between profit and ticket price in order to maximize the profit.
+#+END_QUOTE
+
+** Exercise 27                                                     :exercise:
+
+#+BEGIN_QUOTE
+
+Our solution to the sample problem contains several constants in the middle of functions.
+As One Program, Many Definitions already points out, it is best to give names to
+such constants so that future readers understand where these numbers come from.
+Collect all definitions in DrRacket’s definitions area and change them so that
+all magic numbers are refactored into constant definitions. 
+
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+; constants given in the problem
+(define attendees-baseline 120)
+(define ticket-price-baseline 5.0)
+(define attendance-change-rate 15)
+(define ticket-price-change-rate 0.1)
+(define fixed-cost 180)
+(define variable-cost-rate 0.04)
+
+(define (attendees ticket-price)
+  (- attendees-baseline (* (- ticket-price ticket-price-baseline)
+                           (/ attendance-change-rate ticket-price-change-rate))))
+
+; the revenue is exactly the product of ticket price and number of attendees
+(define (revenue ticket-price)
+  (* ticket-price (attendees ticket-price)))
+
+; The cost consists of two parts: a fixed part ($180) and a variable part that
+; depends on the number of attendees
+(define (cost ticket-price)
+  (+ fixed-cost (* variable-cost-rate (attendees ticket-price))))
+
+; profit is the difference between revenue and costs for some given ticket price
+(define (profit ticket-price)
+  (- (revenue ticket-price)
+     (cost ticket-price)))
+
+#+END_SRC
+
+
+
+** Exercise 28                                                     :exercise:
+#+BEGIN_QUOTE
+Determine the potential profit for these ticket prices: $1, $2, $3, $4, and $5.
+Which price maximizes the profit of the movie theater? Determine
+the best ticket price to a dime. 
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+;; copy definitions from Exercise 27 to the definitions area
+(profit 1)   ; => 511.2
+(profit 2)   ; => 937.2
+(profit 3)   ; => 1063.2
+(profit 4)   ; => 889.2
+(profit 5)   ; => 415.2
+
+;; price around $3 seems to result in maximum profit
+(profit 3.1)   ; => 1059.3
+(profit 2.9)    ; => 1064.1
+(profit 2.8)    ; => 1062
+
+#+END_SRC
+
+$2.90 seems to be the ideal price.
+
+
+** Exercise 29
+#+BEGIN_QUOTE
+
+After studying the costs of a show, the owner discovered several ways of lowering the cost.
+As a result of these improvements, there is no longer a fixed cost; a variable cost of $1.50
+per attendee remains.
+
+Modify both programs to reflect this change. When the programs are modified, test them again
+with ticket prices of $3, $4, and $5 and compare the results. 
+
+#+END_QUOTE
+
+Solution:
+
+modified version of the program following the function composition method
+  
+#+BEGIN_SRC racket
+; constants given in the problem
+(define attendees-baseline 120)
+(define ticket-price-baseline 5.0)
+(define attendance-change-rate 15)
+(define ticket-price-change-rate 0.1)
+(define variable-cost-rate 1.50)
+
+(define (attendees ticket-price)
+  (- attendees-baseline (* (- ticket-price ticket-price-baseline)
+                           (/ attendance-change-rate ticket-price-change-rate))))
+
+; the revenue is exactly the product of ticket price and number of attendees
+(define (revenue ticket-price)
+  (* ticket-price (attendees ticket-price)))
+
+; The cost is just the product of variable cost rate and 
+; the number of attendees
+(define (cost ticket-price)
+  (* variable-cost-rate (attendees ticket-price)))
+
+; profit is the difference between revenue and costs for some given ticket price
+(define (profit ticket-price)
+  (- (revenue ticket-price)
+     (cost ticket-price)))
+
+(profit 3) ; => 630
+(profit 4) ; => 675
+(profit 5) ; => 420
+#+END_SRC
+
+modified version of the program with magic numbers
+
+#+BEGIN_SRC racket
+(define (profit price)
+  (- (* (+ 120
+           (* (/ 15 0.1)
+              (- 5.0 price)))
+        price)
+     (* 1.50
+           (+ 120
+              (* (/ 15 0.1)
+                 (- 5.0 price))))))
+
+(profit 3) ; => 630
+(profit 4) ; => 675
+(profit 5) ; => 420
+#+END_SRC
+
+
+
+* 2.4 Global Constants
+  
+The naming convention for defining global variables is all caps like:
+
+#+BEGIN_SRC racket
+(define CURRENT-PRICE 5)
+(define NL "\n")
+#+END_SRC
+
+Slogan from the book concerning constants:
+#+BEGIN_QUOTE
+/For every constant mentioned in a problem statement, introduce one constant definition./
+#+END_QUOTE
+
+** Exercise 30                                                     :exercise:
+#+BEGIN_QUOTE
+Define constants for the price optimization program at the movie theater so that
+the price sensitivity of attendance (15 people for every 10 cents) becomes a computed constant.
+#+END_QUOTE
+
+Solution:
+
+#+BEGIN_SRC racket
+; constants given in the problem
+(define ATTENDEES-BASELINE 120)
+(define TICKET-PRICE-BASELINE 5.0)
+(define ATTENDANCE-CHANGE (/ 15 0.1))
+(define FIXED-COST 180)
+(define VARIABLE-COST-RATE 0.04)
+
+(define (attendees ticket-price)
+  (- ATTENDEES-BASELINE (* (- ticket-price TICKET-PRICE-BASELINE)
+                           ATTENDANCE-CHANGE)))
+
+; the revenue is exactly the product of ticket price and number of attendees
+(define (revenue ticket-price)
+  (* ticket-price (attendees ticket-price)))
+
+; The cost consists of two parts: a fixed part ($180) and a variable part that
+; depends on the number of attendees
+(define (cost ticket-price)
+  (+ FIXED-COST (* VARIABLE-COST-RATE (attendees ticket-price))))
+
+; profit is the difference between revenue and costs for some given ticket price
+(define (profit ticket-price)
+  (- (revenue ticket-price)
+     (cost ticket-price)))
+     
+(profit 2.9)    ; => 1064.1
+
+#+END_SRC
+
+
+
+
+
+* 2.5 Programs
+
+/2htdp/batch-io/ library provides two functions to create file-based batch programs:
+
+--  ~read-file~, which reads the content of a file as a string
+
+-- ~write-file~, which creates a file from a given string, overwriting
+
+#+BEGIN_SRC racket
+(require 2htdp/batch-io)
+
+; write some string to a file
+(write-file "test.txt" "Hello, world!\nI'm learning Racket.\nThis is for testing purposes only.")
+
+; => "test.txt"
+
+; read the contents of the file
+(read-file "test.txt")
+
+; => "Hello, world!\nI'm learning Racket.\nThis is for testing purposes only."
+
+
+; properly display the contents of the file in the interactions area
+(write-file 'stdout (read-file "test.txt"))
+
+; =>
+; Hello, world!
+; I'm learning Racket.
+; This is for testing purpose only.'stdout
+
+#+END_SRC
+
+** Exercise 31                                                    :exercise:
+#+BEGIN_QUOTE
+Recall the letter program from Composing Functions. Here is how to launch the program and have it
+write its output to the interactions area:
+
+#+BEGIN_SRC racket
+(define (letter fst lst signature-name)
+  (string-append
+    (opening fst)
+    "\n\n"
+    (body fst lst)
+    "\n\n"
+    (closing signature-name)))
+ 
+(define (opening fst)
+  (string-append "Dear " fst ","))
+ 
+(define (body fst lst)
+  (string-append
+   "We have discovered that all people with the" "\n"
+   "last name " lst " have won our lottery. So, " "\n"
+   fst ", " "hurry and pick up your prize."))
+ 
+(define (closing signature-name)
+  (string-append
+   "Sincerely,"
+   "\n\n"
+   signature-name
+   "\n"))
+
+(write-file
+   'stdout
+   (letter "Matthew" "Fisler" "Felleisen"))
+
+#+END_SRC
+
+Of course, programs are useful because you can launch them for many different inputs.
+Run letter on three inputs of your choice.
+#+END_QUOTE
+
+Solution:
+#+BEGIN_SRC racket
+(write-file 'stdout (letter "Hal" "Abelson" "Lisa P. Hacker"))
+(write-file 'stdout (letter "Daniel" "Friedman" "Dybvig"))
+(write-file 'stdout (letter "Gerald" "Sussman" "Krishnamurthi"))
+#+END_SRC
+
+
+** Exercise 32                                                    :exercise:
+#+BEGIN_QUOTE
+Most people no longer use desktop computers just to run applications
+but also employ cell phones, tablets, and their cars’ information control screen.
+Soon people will use wearable computers in the form of intelligent glasses, clothes,
+and sports gear. In the somewhat more distant future, people may come with built-in bio
+computers that directly interact with body functions. Think of ten different forms of
+events that software applications on such computers will have to deal with.
+#+END_QUOTE
+
+Solution:
+
+List of possible events software applications in a built-in bio computer may have to deal with:
+
+-- Body temperature change.
+
+-- Pulse rate or heart rate change.
+
+-- Movement like walking, running or climbing.
+
+-- Eye movement.
+
+-- Change in blood pressure.
+
+-- Presence of different substances in blood e.g. sugar, alcohol, etc.
+
+-- Release of different hormones.
+
+-- Changes in brain waves during different activities.
+
+-- Changes in breathing pattern. 
+
+-- Changes in body posture. 
