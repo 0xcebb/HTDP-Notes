@@ -385,7 +385,7 @@ Confirm your expectation with DrRacket and its stepper.
 #+END_QUOTE
 
 Solution:
-The expected answer is the string ="hellow_orld"=.
+The expected answer is the string "=hellow_orld=".
 
 
 

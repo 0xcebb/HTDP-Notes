@@ -130,3 +130,4 @@ We'll learn more BSL syntax as we go. So, Let's Start.
 * I Fixed-Size Data
 
 ** [[file:1_arithmetic.org][1. Arithmetic]]
+** [[file:2_functions_and_programs.org][2. Functions and Programs]]
