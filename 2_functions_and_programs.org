@@ -730,3 +730,45 @@ List of possible events software applications in a built-in bio computer may hav
 -- Changes in breathing pattern. 
 
 -- Changes in body posture. 
+
+
+** big-bang programs
+
+The /2htdp/universe/ library provides ~big-bang~, using which we can create programs in gradual manner.
+It keeps track of the state of the program and provides a mechanism to tell DrRacket which function to 
+run at which event. The big-bang expression has the following form:
+
+
+(big-bang /state-expr/ /clause/ ...)
+
+The /state-expr/ is the initial state, and it has one required clause - /to-draw/, which tells 
+DrRacket how to render the state of the program. Other optional clauses tell DrRacket what to do
+in case of certain events.
+
+#+BEGIN_SRC racket
+(require 2htdp/image)
+(require 2htdp/universe)
+
+(define (number->square s)
+  (square s "solid" "red"))
+
+(define (stop y ke)
+  0)
+
+; draws a red square that continuously shrinks
+; initial state value i.e. the side length of the square, is given as 100
+; to-draw clause takes a function that renders a scene
+; on-tick cluse takes a function that returns a new state value everytime the clock ticks,
+; here everytime the clock ticks the side length of the square is subtracted by one.
+; stop-when clause takes a function that returns a boolean, #true causes the program to stop
+; on-key clause takes a function that returns a new state value when a key is pressed
+; here program stops when the side length of the square becomes zero
+; program also stops when the user presses any key since stop returns zero as the new state value
+(big-bang 100
+  [to-draw number->square]
+  [on-tick sub1]
+  [stop-when zero?]
+  [on-key stop])
+
+#+END_SRC
+
