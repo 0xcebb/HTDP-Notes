@@ -131,3 +131,5 @@ We'll learn more BSL syntax as we go. So, Let's Start.
 
 ** [[file:1_arithmetic.org][1. Arithmetic]]
 ** [[file:2_functions_and_programs.org][2. Functions and Programs]]
+** [[file:3_how_to_design_programs.org][3. How to Design Programs]]
+

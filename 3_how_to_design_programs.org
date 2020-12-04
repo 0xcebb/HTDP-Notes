@@ -1,0 +1,1084 @@
+#+title: How to Design Programs
+#+options: num:nil tags:nil
+
+* Some Important Points
+
+-- It is critical to learn how to get from a problem statement to a program.
+
+-- A good program comes with a short write-up that explains what it does, what inputs it expects
+   and what it produces.
+
+-- The program should be evidently connected to the problem statement so that a small change in
+   the problem statement is easy to translate into a small change to the program. Software engineers
+   call this a "programming product".
+   
+** Exercise 33                                                     :exercise:
+   #+BEGIN_QUOTE
+   Research the "year 2000" problem.
+   #+END_QUOTE
+   
+   Solution:
+
+    "Year 2000 problem" or the "Y2K bug"  was a bug introduced in computer softwares that represented years using two digit numbers only e.g. using 69 for 1969.
+    Programmers realized that when the year 2000 comes around, the digits representing the year would transition from 99 to 00 again. This would cause software systems
+    to store incorrect date and produce incorrect results. People were afraid that critical software sytems used in banks, stock exchanges or safety-critical systems like
+    the air traffic controllers may malfunction and will result in chaos. Year 2000 went by with only few minor problems thanks to the efforts made in the previous years to
+    update the software systems with the bug. The problem was mainly caused by scarcity of memory (due to high cost) in 60s and 70s, because of this, programmers used various tricks
+    to squeeze the data into every last bit of the memory available. Those who were aware of the problem with this approach were complacent enought to think that the programs
+    they were writing would retire by the year 2000. The problem was solved by either updating the softwares to use 4 digits to represent the years or using some heuristics to determine the
+    century but keeping the 2-digit year format.
+
+
+
+
+#+BEGIN_QUOTE
+
+
+
+#+END_QUOTE
+
+
+* 3.1 Designing Functions
+  
+A /data definition/ is just a comment that names a collection of data (class) that is used to represent
+the relevant information using meaningful words and inform readers how to create elements of such a class.
+
+e.g.
+
+#+BEGIN_SRC racket
+; A Temperature is a Number.
+; interpretation represents Celsius degrees
+
+#+END_SRC
+
+
+** The Function Design Process
+
+1. Express how you wish to represent information as data in a one (or more) line comment.
+
+    #+BEGIN_SRC racket
+    ; We use numbers to represent centimeters.
+
+    #+END_SRC
+
+2. Write down a signature, a statement of purpose, and a function header.
+
+   -- /function signature/ is a comment that tells the readers how many inputs your function consumes, from which classes they are drawn and
+     what kind of data it produces. e.g. for a function that consumes one String and produce a Number.
+
+    #+BEGIN_SRC racket
+    ; String -> Number
+    #+END_SRC
+
+	e.g. signature for a function that takes a Number, a String and an Image and produces an Image
+
+    #+BEGIN_SRC racket
+    ; Number String Image -> Image
+
+    #+END_SRC
+
+  -- A /purpose statement/ is a comment that summarizes the purpose of the function. It should answer the question /What does the function compute?/ e.g.
+  
+    #+BEGIN_SRC racket
+    ; Converts the given string to a number
+    (define (string->number s)
+    ...)
+    #+END_SRC
+    
+3. Illustrate the signature and the purpose statement with some functional examples.
+   #+BEGIN_SRC racket
+   ; Number -> Number
+   ; computes the area of a square with side len
+   ; given: 2, expect: 4
+   ; given: 7, expect: 49
+   (define (area-of-square len) 0)    ;; this is the function header
+   
+   #+END_SRC
+   
+4. Create a function template with what are givens and what we need to compute. This is called "taking inventory" in the book.
+   #+BEGIN_SRC racket
+   ; Number -> Number
+   ; computes the area of a square with side len
+   ; given: 2, expect: 4
+   ; given: 7, expect: 49
+   (define (area-of-square len)
+     (... len ...)) 
+   #+END_SRC
+   
+5. The next step is to write the program i.e. the function body 
+   #+BEGIN_SRC racket
+   ;Number -> Number
+   ; computes the area of a square with side len
+   ; given: 2, expect: 4
+   ; given: 7, expect: 49
+   (define (area-of-square len)
+     (sqr len)) 
+   #+END_SRC
+   
+   Another complete definition:
+   
+   #+BEGIN_SRC racket
+   ; Number String Image -> Image
+   ; adds s to img, y pixels from top, 10 pixels to the left
+   ; given: 
+   ;    5 for y, 
+   ;    "hello" for s, and
+   ;    (empty-scene 100 100) for img
+   ; expected: 
+   ;    (place-image (text "hello" 10 "red") 10 5 ...)
+   ;    where ... is (empty-scene 100 100)
+   (define (add-image y s img)
+     (place-image (text s 10 "red") 10 y img))
+   
+   #+END_SRC
+   
+6. The final step is to test the function with the examples from step 3.
+    #+BEGIN_SRC racket
+    (area-of-square 2)  ; => 4
+    (area-of-square 7)  ; => 49
+
+    #+END_SRC
+    
+When there's a mismatch between the expected output and the result, the book has the following tip:
+
+#+BEGIN_QUOTE
+we recommend that you first reassure yourself that the expected results are correct. If so, assume that the mistake is in the function definition. Otherwise,
+fix the example and then run the tests again. If you are still encountering problems, you may have encountered the third, somewhat rare, situation.
+#+END_QUOTE
+
+
+   
+
+
+
+
+
+
+* 3.2 Finger Exercises: Functions
+  
+
+** Exercise 34                                                     :exercise:
+    #+BEGIN_QUOTE
+    Design the function string-first, which extracts the first character from a non-empty string. Don’t worry about empty strings. 
+    #+END_QUOTE
+
+    Solution:
+    #+BEGIN_SRC racket
+    ; String -> 1String
+    ; Extracts the first character from the given non-empty string
+    ; given: "hello", expect: "h"
+    ; given: "a", expect: "a"
+    (define (string-first s)
+      (substring s 0 1))
+
+    (string-first "hello")  ; => "h"
+    (string-first "a")      ; => "a"
+
+    #+END_SRC
+    
+
+** Exercise 35                                                     :exercise:
+   #+BEGIN_QUOTE
+   Design the function string-last, which extracts the last character from a non-empty string.
+   #+END_QUOTE
+   
+   Solution:
+   #+BEGIN_SRC racket
+   ; String -> 1String
+   ; Extracts the last character from the given non-empty string
+   ; given: "hello", expect: "o"
+   ; given: "a", expect: "a"
+   (define (string-last s)
+   (substring s (sub1 (string-length s))
+	 (string-length s)))
+
+   (string-last "hello")  ; => "o"
+   (string-last "a")      ; => "a"
+   #+END_SRC
+   
+
+** Exercise 36                                                     :exercise:
+   #+BEGIN_QUOTE
+    Design the function image-area, which counts the number of pixels in a given image.
+   #+END_QUOTE
+
+   Solution:
+
+   #+BEGIN_SRC racket
+   (string-last "hello")  ; => "o"
+   (string-last "a")      ; => "a"
+    require 2htdp/image)
+
+    ; Image -> Number 
+    ; Calculates the number of pixels i.e. area of the given image
+    ; given: (rectangle 20 40 "solid" "blue")  , expect: 800
+    ; given: (circle 10 "solid" "blue"), expect: 400 (area of the rectangle that includes the circle)
+    (define (image-area img)
+    (* (image-width img) (image-height img)))
+
+    (image-area (rectangle 20 40 "solid" "blue"))  ; => 800
+    (image-area (circle 10 "solid" "blue"))        ; => 400
+
+   #+END_SRC
+   
+   
+** Exercise 37                                                     :exercise:
+   #+BEGIN_QUOTE
+    Design the function string-rest, which produces a string like the given one with the first character removed.
+   #+END_QUOTE
+
+    Solution:
+    #+BEGIN_SRC racket
+    ; String -> String
+    ; Returns the String with the first character removed from the given non-empty string
+    ; given: "hello", expect: "ello"
+    ; given: "a", expect: ""
+    (define (string-rest s)
+      (substring s 1 (string-length s)))
+
+    (string-rest "hello")  ; => "ello"
+    (string-rest "a")      ; => ""
+
+    #+END_SRC
+    
+
+** Exercise 38                                                     :exercise:
+    #+BEGIN_QUOTE
+    Design the function string-remove-last, which produces a string like the given one with the last character removed.
+    #+END_QUOTE
+
+    Solution:
+    #+BEGIN_SRC racket
+    ; String -> String
+    ; Returns the String with the last character removed from the given non-empty string
+    ; given: "hello", expect: "hell"
+    ; given: "a", expect: ""
+    (define (string-remove-last s)
+    (substring s 0 (sub1 (string-length s))))
+
+    (string-remove-last "hello")  ; => "hell"
+    (string-remove-last "a")      ; => ""
+
+
+    #+END_SRC
+    
+
+* 3.3 Domain Knowledge
+To code the body of the function, you need to have some knowledge about the domain of the program.
+
+#+BEGIN_QUOTE
+There are two forms of domain knowledge:
+
+1. Knowledge from external domains, such as mathematics, music, biology, civil engineering, art, and so on.
+   Because programmers cannot know all of the application domains of computing, they must be prepared to understand
+   the language of a variety of application areas so that they can discuss problems with domain experts.
+   Mathematics is at the intersection of many, but not all, domains. Hence, programmers must often pick up new
+   languages as they work through problems with domain experts.
+
+2. Knowledge about the library functions in the chosen programming language. When your task is to translate a
+   mathematical formula involving the tangent function, you need to know or guess that your chosen language comes
+   with a function such as BSL’s tan. When your task involves graphics, you will benefit from understanding the
+   possibilities of the 2htdp/image library.
+#+END_QUOTE
+
+
+* 3.4 From Functions to Programs
+
+Large programs consists of many auxiliary functions and global constants. The book suggests to include the defined global constants in the template. It also
+suggests to keep a "wishlist" of needed auxiliary functions. Each entry of this list should have three things: a meaningful name of the function, a signature,
+and a purpose statement. Until the "wishlist" is empty, pick a wish, design the function and remove the wish from the list. Include any new wish that comes up
+during the design process into the list. Repeat this process until the list is empty.
+
+
+* 3.5 On Testing
+Automatic testing is useful as it is quite irritating to test each possible case manually. BSL provides
+a testing form: ~check-expect~ that compares the results of the first expression with the given second expression. Its form is:
+
+#+BEGIN_QUOTE
+(check-expect /expression/ /expected-expression/)
+#+END_QUOTE
+
+#+BEGIN_SRC racket
+; Number -> Number 
+; converts Fahrenheit temperatures to Celsius
+; given 32, expect 0
+; given 212, expect 100
+; given -40, expect -40
+(define (f2c f)
+  (* 5/9 (- f 32)))
+  
+(check-expect (f2c -40) -40)
+(check-expect (f2c 32) 0)
+(check-expect (f2c 212) 100)
+#+END_SRC
+
+
+* 3.6 Designing World Programs
+  Following is a "Wishlist" for designing world programs:
+
+  #+BEGIN_SRC racket
+    ; WorldState: data representing the current world (cw)
+     
+    ; WorldState -> Image
+    ; when needed, big-bang obtains the image of the current 
+    ; state of the world by evaluating (render cw) 
+    (define (render cw) ...)
+     
+    ; WorldState -> WorldState
+    ; for each tick of the clock, big-bang obtains the next 
+    ; state of the world from (clock-tick-handler cw) 
+    (define (clock-tick-handler cw) ...)
+     
+    ; WorldState String -> WorldState 
+    ; for each keystroke, big-bang obtains the next state 
+    ; from (keystroke-handler cw ke); ke represents the key
+    (define (keystroke-handler cw ke) ...)
+     
+    ; WorldState Number Number String -> WorldState 
+    ; for each mouse gesture, big-bang obtains the next state
+    ; from (mouse-event-handler cw x y me) where x and y are
+    ; the coordinates of the event and me is its description 
+    (define (mouse-event-handler cw x y me) ...)
+     
+    ; WorldState -> Boolean
+    ; after each event, big-bang evaluates (end? cw) 
+    (define (end? cw) ...)
+
+  #+END_SRC
+
+** Sample Problem: 
+  #+BEGIN_QUOTE
+  Design a program that moves a car from left to right on the world canvas,
+  three pixels per clock tick.
+  #+END_QUOTE
+  
+  We'll use the design recipe for world programs to design the above program.
+
+  1. All the properties of the world that remain the same over time are defined as constants including
+     images used in the world. 
+     
+    #+BEGIN_SRC racket
+    (define WIDTH-OF-WORLD 200)
+     
+    (define WHEEL-RADIUS 5)
+    (define WHEEL-DISTANCE (* WHEEL-RADIUS 5))
+    
+    ;; Graphical constants
+    (define WHEEL
+      (circle WHEEL-RADIUS "solid" "black"))
+    (define SPACE
+      (rectangle ... WHEEL-RADIUS ... "white"))
+    (define BOTH-WHEELS
+      (beside WHEEL SPACE WHEEL))
+    #+END_SRC
+    
+  2. Those properties that change over time in reaction to clock ticks, keystrokes, or mouse actions
+     determine the current state of the world, hence write a data definition for it. Here the car's
+     distance from the left (or the right) margin changes over time. We can represent this distance 
+     with a Number class.
+     
+     #+BEGIN_SRC racket
+     ; A WorldState is a Number.
+     ; interpretation: the number of pixels between the left border of the scene and the car.
+     #+END_SRC
+     
+  3. We need to design functions to feed to different clauses of the ~big-bang~ expression:
+     -- a function that maps any given state into an image for the ~big-bang~ to render (passed to ~to-draw~). 
+     -- functions to update the state as the clock ticks (passed to ~on-tick~) as well as keyboard and mouse handlers.
+     -- function that determines when the program should stop (passed to ~stop-when~).
+     
+    #+BEGIN_SRC racket
+    ; WorldState -> Image
+    ; places the image of the car x pixels from the left margin of the BACKGROUND image
+    (define (render x)
+      BACKGROUND)
+    
+    ; WorldState -> WorldState
+    ; adds 3 to x to move the car right
+    (define (tock x)
+      ... x ...)
+
+    ; WorldState -> Boolean
+    ; returns #true if the given WorldState x is the final state. 
+    (define (end? x)
+      ... x ...)
+    #+END_SRC
+    
+  4. We need a main function whose sole purpose is to launch the world program.
+  
+    #+BEGIN_SRC racket
+    ; WorldState -> WorldState
+    ; launches the program from some initial state
+    (define (main ws)
+      (big-bang ws
+        [on-tick tock]
+        [to-draw render]))
+
+    ;; to put the car at 13 pixels from the left margin
+    (main 13)
+    #+END_SRC
+    
+
+** Exercise 39                                                     :exercise:
+    #+BEGIN_QUOTE
+    Good programmers ensure that an image such as CAR can be enlarged or reduced
+    via a single change to a constant definition. Good programmers establish a single
+    point of control for all aspects of their programs, not just the graphical constants.
+    Several chapters deal with this issue. We started the development of our car image
+    with a single plain definition:
+    
+    ~(define WHEEL-RADIUS 5)~
+
+    The definition of WHEEL-DISTANCE is based on the wheel’s radius. Hence, changing
+    WHEEL-RADIUS from 5 to 10 doubles the size of the car image. This kind of program
+    organization is dubbed single point of control, and good design employs this idea 
+    as much as possible.
+    
+    Develop your favorite image of an automobile so that WHEEL-RADIUS remains the single 
+    point of control. 
+    #+END_QUOTE
+    
+    Solution:
+    #+BEGIN_SRC racket
+    (require 2htdp/image)
+    (require 2htdp/universe)
+
+    ; The radius of the wheel of the car is taken as "the single point of control"
+    (define WHEEL-RADIUS 5)
+
+    ; The distance between front and back wheel is taken as twice the WHEEL-RADIUS
+    (define WHEEL-DISTANCE (* 2 WHEEL-RADIUS))
+    (define WHEEL (circle WHEEL-RADIUS "solid" "black"))
+    (define SPACE (rectangle WHEEL-DISTANCE 0 "solid" "red"))
+    (define CAR-WHEELS (beside WHEEL SPACE WHEEL))
+
+    ; Roof width is twice the WHEEL-RADIUS and roof height is 4 times the WHEEL-RADIUS
+    (define ROOF-WIDTH (* 4 WHEEL-RADIUS))
+    (define ROOF-HEIGHT (* 2 WHEEL-RADIUS))
+    (define CAR-ROOF (rectangle ROOF-WIDTH ROOF-HEIGHT "solid" "red"))
+
+    ; The chasis has width 8 times the WHEEL-RADIUS and height 4 times the WHEEL-RADIUS
+    (define CHASIS-WIDTH (* 8 WHEEL-RADIUS))
+    (define CHASIS-HEIGHT (* 4 WHEEL-RADIUS))
+    (define CAR-CHASIS (rectangle CHASIS-WIDTH CHASIS-HEIGHT "solid" "red"))
+
+    ; WHEEL-TO-CHASIS is the straight vertical distance from the top of the chasis to
+    ; top of the wheels
+    (define WHEEL-TO-CHASIS (* 3 WHEEL-RADIUS))
+
+    ; Since the left corner of the chasis is to the left of the wheels so x is negative,
+    ; and the chasis is higher than the wheels, so the y is also negative.
+    (define CAR-BODY
+    (overlay/xy CAR-WHEELS
+		(- WHEEL-RADIUS) (- WHEEL-TO-CHASIS)
+		CAR-CHASIS))
+
+    ; The left corner of the CAR-BODY is to the left of the CAR-ROOF, hence x is negative here.
+    ; The CAR-BODY should be below the CAR-ROOF, hence y is positive and equal to the height of the CAR-ROOF.
+    (define CAR
+    (overlay/xy CAR-ROOF
+		(- WHEEL-DISTANCE) ROOF-HEIGHT
+		CAR-BODY))
+
+    #+END_SRC
+    
+    Function that handles clock ticks can be designed as follows:
+    #+BEGIN_SRC racket
+    ; WorldState -> WorldState 
+    ; moves the car by 3 pixels for every clock tick
+    ; examples: 
+    ;   given: 20, expect 23
+    ;   given: 78, expect 81
+    (define (tock cw)
+      (+ cw 3))
+
+    #+END_SRC
+
+    
+** Exercise 40                                                     :exercise:
+   #+BEGIN_QUOTE
+   Formulate the examples as BSL tests, that is, using the check-expect form.
+   Introduce a mistake. Re-run the tests.
+   #+END_QUOTE
+
+  Solution:
+    #+BEGIN_SRC racket
+    ; WorldState -> WorldState 
+    ; moves the car by 3 pixels for every clock tick
+    ; example test cases: 
+    (check-expect (tock 20) 23)
+    (check-expect (tock 78) 81)
+    (define (tock cw)
+      (+ cw 3))
+
+    ; => Both tests passed!
+    
+    #+END_SRC
+    
+    Function that renders the image of the car according to the world state given:
+    #+BEGIN_SRC racket
+    ; WorldState -> Image
+    ; places the car into the BACKGROUND scene,
+    ; according to the given world state 
+     (define (render cw)
+       (place-image CAR cw Y-CAR BACKGROUND))
+
+    #+END_SRC
+    
+
+** Exercise 41                                                     :exercise:
+   #+BEGIN_QUOTE
+   Finish the sample problem and get the program to run. That is, assuming that you have
+   solved exercise 39, define the constants BACKGROUND and Y-CAR. Then assemble all the
+   function definitions, including their tests. When your program runs to your satisfaction,
+   add a tree to the scenery. We used
+
+   #+BEGIN_SRC 
+   (define tree
+      (underlay/xy (circle 10 "solid" "green")
+                   9 15
+                   (rectangle 2 20 "solid" "brown")))
+   #+END_SRC
+
+    to create a tree-like shape. Also add a clause to the big-bang expression that stops
+    the animation when the car has disappeared on the right side. 
+   #+END_QUOTE
+   
+  Solution:
+    #+BEGIN_SRC racket
+
+    (require 2htdp/image)
+    (require 2htdp/universe)
+
+    ; The radius of the wheel of the car is taken as "the single point of control"
+    (define WHEEL-RADIUS 5)
+
+    ; The distance between front and back wheel is taken as twice the WHEEL-RADIUS
+    (define WHEEL-DISTANCE (* 4 WHEEL-RADIUS))
+    (define WHEEL (circle WHEEL-RADIUS "solid" "black"))
+    (define SPACE (rectangle WHEEL-DISTANCE 0 "solid" "red"))
+    (define CAR-WHEELS (beside WHEEL SPACE WHEEL))
+
+    ; Roof width is twice the WHEEL-RADIUS and roof height is 4 times the WHEEL-RADIUS
+    (define ROOF-WIDTH (* 6 WHEEL-RADIUS))
+    (define ROOF-HEIGHT (* 2 WHEEL-RADIUS))
+    (define CAR-ROOF (rectangle ROOF-WIDTH ROOF-HEIGHT "solid" "red"))
+
+    ; The chasis has width 8 times the WHEEL-RADIUS and height 4 times the WHEEL-RADIUS
+    (define CHASIS-WIDTH (* 10 WHEEL-RADIUS))
+    (define CHASIS-HEIGHT (* 4 WHEEL-RADIUS))
+    (define CAR-CHASIS (rectangle CHASIS-WIDTH CHASIS-HEIGHT "solid" "red"))
+
+    ; WHEEL-TO-CHASIS is the straight vertical distance from the top of the chasis to
+    ; top of the wheels
+    (define WHEEL-TO-CHASIS (* 3 WHEEL-RADIUS))
+
+    ; Since the left corner of the chasis is to the left of the wheels so x is negative,
+    ; and the chasis is higher than the wheels, so the y is also negative.
+    (define CAR-BODY
+    (overlay/xy CAR-WHEELS
+		(- WHEEL-RADIUS) (- WHEEL-TO-CHASIS)
+		CAR-CHASIS))
+
+    (define BOOT-LENGTH (/ CHASIS-WIDTH 5))
+    ; The left corner of the CAR-BODY is to the left of the CAR-ROOF, hence x is negative here.
+    ; The CAR-BODY should be below the CAR-ROOF, hence y is positive and equal to the height of the CAR-ROOF.
+    (define CAR
+    (overlay/xy CAR-ROOF
+		(- BOOT-LENGTH) ROOF-HEIGHT
+		CAR-BODY))
+
+
+    (define WIDTH-OF-WORLD 200)
+
+    (define TREE
+	(underlay/xy (circle 10 "solid" "green")
+		    9 15
+		    (rectangle 2 20 "solid" "brown")))
+
+
+    ; The car moves along this scene.
+    (define BACKGROUND (overlay TREE (rectangle WIDTH-OF-WORLD 40 "solid" "gray")))
+
+    ; vertical position of the car on the scene
+    (define Y-CAR CHASIS-HEIGHT)
+
+    ; WorldState -> Image
+    ; interpretation: WorldState is a number that represents the number
+    ; of pixels from the left margin of the scene to the car.
+    ; places the image of the car x pixels from 
+    ; the left margin of the BACKGROUND image 
+    (define (render cw)
+    (place-image CAR (+ cw (/ CHASIS-WIDTH 2)) Y-CAR BACKGROUND))
+
+
+    ; WorldState -> WorldState 
+    ; moves the car by 3 pixels for every clock tick
+    ; example test cases: 
+    (check-expect (tock 20) 23)
+    (check-expect (tock 78) 81)
+    (define (tock cw)
+    (+ cw 3))
+
+
+    ; WorldState -> Boolean
+    ; returns #true if the given world state matches the condition for the final state,
+    ; otherwise it returns #false.
+    (check-expect (end? 0) #false)
+    (check-expect (end? 50) #false)
+    (check-expect (end? WIDTH-OF-WORLD) #true)
+    (check-expect (end? (add1 WIDTH-OF-WORLD)) #true)
+    (define (end? cw)
+    (>= cw WIDTH-OF-WORLD))
+
+    ; WorldState -> WorldState
+    ; the world program which renders a moving car from left to right.
+    (define (main cw)
+    (big-bang cw
+	(to-draw render)
+	(on-tick tock)
+	(stop-when end?)))
+
+    (main 0)
+    #+END_SRC
+
+
+** Exercise 42                                                     :exercise:
+   #+BEGIN_QUOTE
+   Modify the interpretation of the sample data definition so that a state denotes
+   the x-coordinate of the right-most edge of the car.   
+   #+END_QUOTE
+   
+  Solution:
+    #+BEGIN_SRC racket
+    ; A WorldState is a Number.
+    ; interpretation: the value of the x-coordinate of the rightmost edge of the car
+    
+    #+END_SRC
+
+
+** Exercise 43                                                     :exercise:
+   #+BEGIN_QUOTE
+   Let’s work through the same problem statement with a time-based data definition:
+
+   #+BEGIN_SRC 
+    ; An AnimationState is a Number.
+    ; interpretation the number of clock ticks 
+    ; since the animation started
+
+   #+END_SRC
+
+   Like the original data definition, this one also equates the states of the world with the
+   class of numbers. Its interpretation, however, explains that the number means something
+   entirely different.
+
+   Design the functions ~tock~ and ~render~. Then develop a ~big-bang~ expression so that
+   once again you get an animation of a car traveling from left to right across the world’s
+   canvas.
+
+   How do you think this program relates to animate from Prologue: How to Program?
+
+   Use the data definition to design a program that moves the car according to a sine wave. (Don’t try to drive like that.)
+   #+END_QUOTE
+   
+  Solution:
+  The car animation program using the new data definition:
+    #+BEGIN_SRC racket
+    
+    (require 2htdp/image)
+    (require 2htdp/universe)
+
+    ; The radius of the wheel of the car is taken as "the single point of control"
+    (define WHEEL-RADIUS 5)
+
+    ; The distance between front and back wheel is taken as twice the WHEEL-RADIUS
+    (define WHEEL-DISTANCE (* 4 WHEEL-RADIUS))
+    (define WHEEL (circle WHEEL-RADIUS "solid" "black"))
+    (define SPACE (rectangle WHEEL-DISTANCE 0 "solid" "red"))
+    (define CAR-WHEELS (beside WHEEL SPACE WHEEL))
+
+    ; Roof width is twice the WHEEL-RADIUS and roof height is 4 times the WHEEL-RADIUS
+    (define ROOF-WIDTH (* 6 WHEEL-RADIUS))
+    (define ROOF-HEIGHT (* 2 WHEEL-RADIUS))
+    (define CAR-ROOF (rectangle ROOF-WIDTH ROOF-HEIGHT "solid" "red"))
+
+    ; The chasis has width 8 times the WHEEL-RADIUS and height 4 times the WHEEL-RADIUS
+    (define CHASIS-WIDTH (* 10 WHEEL-RADIUS))
+    (define CHASIS-HEIGHT (* 4 WHEEL-RADIUS))
+    (define CAR-CHASIS (rectangle CHASIS-WIDTH CHASIS-HEIGHT "solid" "red"))
+
+    ; WHEEL-TO-CHASIS is the straight vertical distance from the top of the chasis to
+    ; top of the wheels
+    (define WHEEL-TO-CHASIS (* 3 WHEEL-RADIUS))
+
+    ; Since the left corner of the chasis is to the left of the wheels so x is negative,
+    ; and the chasis is higher than the wheels, so the y is also negative.
+    (define CAR-BODY
+    (overlay/xy CAR-WHEELS
+		(- WHEEL-RADIUS) (- WHEEL-TO-CHASIS)
+		CAR-CHASIS))
+
+    (define BOOT-LENGTH (/ CHASIS-WIDTH 5))
+    ; The left corner of the CAR-BODY is to the left of the CAR-ROOF, hence x is negative here.
+    ; The CAR-BODY should be below the CAR-ROOF, hence y is positive and equal to the height of the CAR-ROOF.
+    (define CAR
+    (overlay/xy CAR-ROOF
+		(- BOOT-LENGTH) ROOF-HEIGHT
+		CAR-BODY))
+
+
+    (define WIDTH-OF-WORLD 200)
+
+    (define TREE
+	(underlay/xy (circle 10 "solid" "green")
+		    9 15
+		    (rectangle 2 20 "solid" "brown")))
+
+
+    ; The car moves along this scene.
+    (define BACKGROUND (overlay TREE (rectangle WIDTH-OF-WORLD 40 "solid" "gray")))
+
+    ; vertical position of the car on the scene
+    (define Y-CAR CHASIS-HEIGHT)
+
+    ; An AnimationState is a Number.
+    ; interpretation: the number of clock ticks 
+    ; since the animation started
+
+    ; AnimationState -> AnimationState
+    ; places the image of the car in the scene
+    ; (3 * AnimationState) pixels from the left margin of the scene.
+    (define (render cw)
+    (place-image CAR (+ (* 3 cw) (/ CHASIS-WIDTH 2)) Y-CAR BACKGROUND))
+
+
+    ; AnimationState -> AnimationState 
+    ; updates the AnimationState after each clock tick
+    ; this determines the rate of the car's motion
+    ; example test cases: 
+    (check-expect (tock 20) 21)
+    (check-expect (tock 78) 79)
+    (define (tock cw)
+    (add1 cw))
+
+    ; AnimationState -> Boolean
+    ; returns #true if the given world state matches the condition for the final state,
+    ; i.e. (3 * AnimationState) is greater or equal to WIDTH-OF-WORLD,
+    ; otherwise it returns #false.
+    (check-expect (end? 0) #false)
+    (check-expect (end? 50) #false)
+    (check-expect (end? (/ WIDTH-OF-WORLD 3)) #true)
+    (check-expect (end? (/ (add1 WIDTH-OF-WORLD) 3)) #true)
+    (define (end? cw)
+    (>= (* 3 cw) WIDTH-OF-WORLD))
+
+
+    ; WorldState -> WorldState
+    ; the world program which renders a moving car from left to right
+    ; with the given initial state
+    (define (main cw)
+    (big-bang cw
+	(to-draw render)
+	(on-tick tock)
+	(stop-when end?)))
+    (main 0)
+    #+END_SRC
+
+    The car animation that moves according to a sine wave:
+    #+BEGIN_SRC racket
+    
+    ;; The first three lines of this file were inserted by DrRacket. They record metadata
+    ;; about the language level of this file in a form that our tools can easily process.
+    #reader(lib "htdp-beginner-reader.ss" "lang")((modname car_animates_sine) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+    (require 2htdp/image)
+    (require 2htdp/universe)
+
+    ; The radius of the wheel of the car is taken as "the single point of control"
+    (define WHEEL-RADIUS 5)
+
+    ; The distance between front and back wheel is taken as twice the WHEEL-RADIUS
+    (define WHEEL-DISTANCE (* 4 WHEEL-RADIUS))
+    (define WHEEL (circle WHEEL-RADIUS "solid" "black"))
+    (define SPACE (rectangle WHEEL-DISTANCE 0 "solid" "red"))
+    (define CAR-WHEELS (beside WHEEL SPACE WHEEL))
+
+    ; Roof width is twice the WHEEL-RADIUS and roof height is 4 times the WHEEL-RADIUS
+    (define ROOF-WIDTH (* 6 WHEEL-RADIUS))
+    (define ROOF-HEIGHT (* 2 WHEEL-RADIUS))
+    (define CAR-ROOF (rectangle ROOF-WIDTH ROOF-HEIGHT "solid" "red"))
+
+    ; The chasis has width 8 times the WHEEL-RADIUS and height 4 times the WHEEL-RADIUS
+    (define CHASIS-WIDTH (* 10 WHEEL-RADIUS))
+    (define CHASIS-HEIGHT (* 4 WHEEL-RADIUS))
+    (define CAR-CHASIS (rectangle CHASIS-WIDTH CHASIS-HEIGHT "solid" "red"))
+
+    ; WHEEL-TO-CHASIS is the straight vertical distance from the top of the chasis to
+    ; top of the wheels
+    (define WHEEL-TO-CHASIS (* 3 WHEEL-RADIUS))
+
+    ; Since the left corner of the chasis is to the left of the wheels so x is negative,
+    ; and the chasis is higher than the wheels, so the y is also negative.
+    (define CAR-BODY
+    (overlay/xy CAR-WHEELS
+		(- WHEEL-RADIUS) (- WHEEL-TO-CHASIS)
+		CAR-CHASIS))
+
+    (define BOOT-LENGTH (/ CHASIS-WIDTH 5))
+    ; The left corner of the CAR-BODY is to the left of the CAR-ROOF, hence x is negative here.
+    ; The CAR-BODY should be below the CAR-ROOF, hence y is positive and equal to the height of the CAR-ROOF.
+    (define CAR
+    (overlay/xy CAR-ROOF
+		(- BOOT-LENGTH) ROOF-HEIGHT
+		CAR-BODY))
+
+
+    (define WIDTH-OF-WORLD 200)
+
+    (define TREE
+	(underlay/xy (circle 10 "solid" "green")
+		    9 15
+		    (rectangle 2 20 "solid" "brown")))
+
+
+    ; The car moves along this scene.
+    (define BACKGROUND (overlay TREE (rectangle WIDTH-OF-WORLD 40 "solid" "gray")))
+
+    ; vertical position of the car on the scene
+    (define Y-CAR CHASIS-HEIGHT)
+
+    ; An AnimationState is a Number.
+    ; interpretation: the number of clock ticks 
+    ; since the animation started
+
+    ; AnimationState -> AnimationState
+    ; places the image of the car in the scene
+    ; (3 * AnimationState) pixels from the left margin of the scene.
+    (define (render cw)
+    (place-image CAR (+ (floor (* 100 (sin cw))) (/ CHASIS-WIDTH 2)) Y-CAR BACKGROUND))
+
+
+    ; AnimationState -> AnimationState 
+    ; updates the AnimationState after each clock tick
+    ; this determines the rate of the car's motion
+    ; example test cases: 
+    (check-expect (tock 20) 20.1)
+    (check-expect (tock 78) 78.1)
+    (define (tock cw)
+    (+ 0.1 cw))
+
+
+
+
+    ; WorldState -> WorldState
+    ; the world program which renders a moving car from left to right
+    ; with the given initial state
+    (define (main cw)
+    (big-bang cw
+	(to-draw render)
+	(on-tick tock)))
+    (main 0)
+    #+END_SRC
+
+** Sample Problem
+#+BEGIN_QUOTE
+Design a program that moves a car across the world canvas, from left to right, at the rate of three pixels per clock tick.
+If the mouse is clicked anywhere on the canvas, the car is placed at the x-coordinate of that click.
+#+END_QUOTE
+
+Solution:
+The revised problem statement only calls for addition of a mouse-event handler and adjustment of
+the main function to add the ~on-mouse~ clause to the ~big-bang~ expression.
+#+BEGIN_SRC racket
+; WorldState Number Number String -> WorldState
+; places the car at x-mouse
+; if the given me is "button-down" 
+; given: 21 10 20 "enter", expected: 21
+; given: 42 10 20 "button-down", expected: 10
+; given: 42 10 20 "move", expected: 42
+(define (hyper x-position-of-car x-mouse y-mouse me)
+  x-position-of-car)
+  
+(define (main ws)
+  (big-bang ws
+    (on-tick tock)
+    (on-mouse hyper)
+    (to-draw render)))
+
+#+END_SRC
+
+
+** Exercise 44                                                     :exercise:
+   #+BEGIN_QUOTE
+   Formulate the examples as BSL tests. Click RUN and watch them fail. 
+   #+END_QUOTE
+   
+  Solution:
+   #+BEGIN_SRC racket
+    ; WorldState Number Number String -> WorldState
+    ; places the car at x-mouse
+    ; if the given me is "button-down" 
+    (check-expect (hyper 21 10 20 "enter") 21)
+    (check-expect (hyper 42 10 20 "button-down") 10)
+    (check-expect (hyper 42 10 20 "move") 42)
+    (define (hyper x-position-of-car x-mouse y-mouse me)
+    x-position-of-car)
+
+   #+END_SRC
+   
+The complete hyper function is:
+#+BEGIN_SRC racket
+; WorldState Number Number String -> WorldState
+; places the car at x-mouse
+; if the given me is "button-down" 
+(check-expect (hyper 21 10 20 "enter") 21)
+(check-expect (hyper 42 10 20 "button-down") 10)
+(check-expect (hyper 42 10 20 "move") 42)
+(define (hyper x-position-of-car x-mouse y-mouse me)
+  (cond
+    [(string=? "button-down" me) x-mouse]
+    [else x-position-of-car]))
+#+END_SRC
+
+
+* 3.7 Virtual Pet Worlds
+
+
+** Exercise 45                                                     :exercise:
+   #+BEGIN_QUOTE
+   Design a “virtual cat” world program that continuously moves the cat from left to right.
+   Let’s call it cat-prog and let’s assume it consumes the starting position of the cat.
+   Furthermore, make the cat move three pixels per clock tick. Whenever the cat disappears on the right,
+   it reappears on the left. You may wish to read up on the modulo function. 
+   #+END_QUOTE
+   
+  Solution:
+  #+BEGIN_QUOTE
+  (define CAT1 [[./images/cat1.png]])
+  #+END_QUOTE
+
+  #+BEGIN_SRC racket
+  (require 2htdp/image)
+  (require 2htdp/universe)
+
+  (define CAT-HEIGHT (image-height CAT1))
+  (define CAT-WIDTH (image-width CAT1))
+  (define BACKGROUND-WIDTH (* 10 CAT-WIDTH))
+  (define BACKGROUND (rectangle BACKGROUND-WIDTH CAT-HEIGHT "solid" "white"))
+  (define Y-POS (/ CAT-HEIGHT 2))
+  ; PetWorld
+  ; Interpretation: PetWorld is a number that represents the x-coordinate of the cat
+  ; in the scene
+
+  ; PetWorld -> Image
+  ; Renders the image of the cat according to the value of PetWorld given
+  (define (render x)
+  (place-image CAT1 x Y-POS BACKGROUND))
+
+  ; PetWorld -> PetWorld
+  ; Places the cat 3-pixels to the right of the given position
+  (check-expect (tock 0) 3)
+  (check-expect (tock BACKGROUND-WIDTH) 3)
+  (check-expect (tock (sub1 BACKGROUND-WIDTH)) 2)
+  (define (tock cw)
+  (modulo (+ cw 3) BACKGROUND-WIDTH))
+
+  ; PetWorld -> PetWorld
+  ; launches the virtual pet world program from given initial value
+  (define (cat-prog ws)
+    (big-bang ws
+      (to-draw render)
+      (on-tick tock)))
+  #+END_SRC
+
+
+** Exercise 46                                                     :exercise:
+   #+BEGIN_QUOTE
+   Improve the cat animation with a slightly different image:
+   (define CAT2 [[./images/cat2.png]])
+   #+END_QUOTE
+   
+  Solution:
+  #+BEGIN_SRC racket
+    ; PetWorld -> Image
+    ; Renders the image of the cat according to the value of PetWorld given
+    (define (render x)
+    (place-image (cond
+		    ((odd? x) CAT1)
+		    (else CAT2))
+		x Y-POS BACKGROUND))
+
+  #+END_SRC
+  
+
+** Exercise 47                                                     :exercise:
+   #+BEGIN_QUOTE
+   Design a world program that maintains and displays a “happiness gauge.” Let’s call it
+   ~gauge-prog~, and let’s agree that the program consumes the maximum level of happiness.
+   The gauge display starts with the maximum score, and with each clock tick, happiness
+   decreases by -0.1; it never falls below 0, the minimum happiness score. Every time the
+   down arrow key is pressed, happiness decreases by 1/5; every time the up arrow is pressed,
+   happiness jumps by 1/3.
+
+   To show the level of happiness, we use a scene with a solid, red rectangle with a black frame.
+   For a happiness level of 0, the red bar should be gone; for the maximum happiness level of 100,
+   the bar should go all the way across the scene.
+   #+END_QUOTE
+   
+  Solution:
+  #+BEGIN_SRC racket
+    (require 2htdp/image)
+    (require 2htdp/universe)
+
+    (define BACKGROUND-WIDTH 100)
+    (define BACKGROUND-HEIGHT 500)
+    (define BACKGROUND (rectangle BACKGROUND-WIDTH BACKGROUND-HEIGHT "solid" "black"))
+    (define MAX-HAPPINESS (- BACKGROUND-HEIGHT 2))
+    (define BAR-WIDTH (- BACKGROUND-WIDTH 2))
+
+
+    ; HappinessGauge
+    ; Interpretation: HappinessGauge is a number that represents the happiness level.
+
+    ; HappinessGauge -> Image
+    (define (draw-happiness-bar hg)
+    (rectangle BAR-WIDTH hg "solid" "red"))
+
+    ; HappinessGauge -> Image
+    ; Renders the image of happiness gauge in the BACKGROUND from the given value
+    (define (render x)
+    (overlay/align "middle" "bottom" (draw-happiness-bar x) BACKGROUND))
+
+    ; HappinessGauge -> HappinessGauge
+    ; Decreases the happiness level by 0.1 on every clock tick
+    (check-expect (tock (add1 MAX-HAPPINESS)) MAX-HAPPINESS)
+    (check-expect (tock 200.1) 200)
+    (check-expect (tock 0) 0)
+    (define (tock cw)
+    (cond ((zero? cw) 0)
+	    ((> cw MAX-HAPPINESS) MAX-HAPPINESS)
+	    (else (- cw 0.1))))
+
+    ; HappinessGauge, KeyEvent -> HappinessGauge
+    ; If KeyEvent is "down", then decreases given HappinessGauge by 1/5
+    ; if KeyEvent is "up", then increases given HappinessGauge by 1/3
+    (check-expect (handle-keypress 500 "up") (+ 500 1/3))
+    (check-expect (handle-keypress 200 "up") (+ 200 1/3))
+    (check-expect (handle-keypress 0 "down") (- 0 1/5))
+    (define (handle-keypress hg ke)
+    (cond ((string=? ke "up") (+ hg 1/3))
+	    ((string=? ke "down") (- hg 1/5))))
+
+    ; HappinessGauge -> HappinessGauge
+    ; launches the happiness gauge program from given initial value
+    (define (gauge-prog ws)
+    (big-bang ws
+	(to-draw render)
+	(on-tick tock)
+	(on-key handle-keypress)))
+
+
+    (gauge-prog MAX-HAPPINESS)
+  
+  #+END_SRC
+
+
