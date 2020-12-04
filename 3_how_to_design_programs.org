@@ -786,10 +786,6 @@ a testing form: ~check-expect~ that compares the results of the first expression
 
     The car animation that moves according to a sine wave:
     #+BEGIN_SRC racket
-    
-    ;; The first three lines of this file were inserted by DrRacket. They record metadata
-    ;; about the language level of this file in a form that our tools can easily process.
-    #reader(lib "htdp-beginner-reader.ss" "lang")((modname car_animates_sine) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
     (require 2htdp/image)
     (require 2htdp/universe)
 
